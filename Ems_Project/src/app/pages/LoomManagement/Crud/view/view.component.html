@@ -1,0 +1,79 @@
+<div class="container" >
+    <h1 style="margin-left:450px;">Registration</h1>
+   
+    <form novalidate (ngSubmit)="insertRecord()" [formGroup]="registerForm">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group label-floating is-empty">
+                        <label class="control-label">Name</label>
+                        <input type="text" class="form-control" formControlName="username">
+                        <!-- <small *ngIf="registerForm.controls.Name.hasError('Required') && (registerForm.controls.Name.dirty || isSubmitted)" class="text-danger">
+                                This Field Is Required
+                             </small> -->
+                    </div>
+                   
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group label-floating is-empty">
+                        <label class="control-label">Password</label>
+                        <input type="password" class="form-control" formControlName="password">
+                    </div>
+                    <!-- <small *ngIf="registerForm.controls.password.hasError('Required') && (registerForm.controls.password.dirty || isSubmitted)" class="text-danger">
+                            This Field Is Required
+                    </small> -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+            </div>
+        </form>
+    <p-dataTable [value]="record" [rows]="10" [paginator]="true" [pageLinks]="3" [globalFilter]="gb" [rowsPerPageOptions]="[5,10,20]"
+    (onRowUnselect)="onRowUnselect();isDeleteShow=false;" [(selection)]="selectedCode"
+    (onHeaderCheckboxToggle)="onHeaderCheckboxToggle()" (onRowSelect)="onRowSelect();isDeleteShow=true;" [paginator]="true" rows="15"
+        [responsive]="true" #dt>
+        <p-header>
+            <div class="row">
+                <div class="col-md-6" style="text-align:left">
+                    <p-multiSelect [options]="columnOptions" [(ngModel)]="cols"></p-multiSelect>
+                </div>
+                <div class="col-md-6" style="text-align:right" *ngIf="(selectedCode!=null && selectedCode.length > 0)">
+                    <button type="button"  class="btn btn-danger" (click)="confirm_action(delete)">Delete</button>
+                    <button type="button" class="btn btn-success" (click)="confirm_action(Active)">Active</button>
+                    <button type="button" class="btn btn-primary" (click)="confirm_action(InActive)"> InActive</button>
+                </div>
+            </div>
+        </p-header>
+        <p-column [style]="{'width':'38px'}" selectionMode="multiple"></p-column>
+        <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header" [filter]="true" [sortable]="true">
+                <!-- <ng-template pTemplate="filter" let-col>
+                        <p-multiSelect [options]="status" defaultLabel="All" styleClass="ui-column-filter"></p-multiSelect>
+                    </ng-template> -->
+        </p-column>
+        <p-column field="Status" header="Status" [filter]="true" filterMatchMode="in" >
+                <ng-template pTemplate="filter" let-col >
+                    <p-multiSelect [options]="status"  defaultLabel="All" (onChange)="dt.filter($event.value,'Status', 'in')" styleClass="ui-column-filter"></p-multiSelect>
+                </ng-template>
+            </p-column>
+        <p-column header="Action">
+            <ng-template let-col let-data="rowData" pTemplate="body" >
+                <button type="button" class="btn btn-primary" (click)="EditData(data)">Edit</button>
+                <button type="button" class="btn btn-danger" (click)="deleterecord(data)">Delete</button>
+                <button type="button" class="btn btn-info" (click)="StatusUpdate(data)">Status</button>
+                <button type="button" class="btn btn-primary" (click)="CkEditor()">Editor</button>
+            </ng-template>
+        </p-column>
+       
+
+        <!-- <p-footer>
+            <div class="ui-helper-clearfix" style="width:100%">
+                <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAdd()" label="Add"></button>
+            </div>
+        </p-footer> -->
+    </p-dataTable>
+
+  </div>
+  <p-growl [(value)]="msgs"></p-growl>
+  <p-confirmDialog header="Confirmation" icon="fa fa-question-circle" width="425"></p-confirmDialog>
+  
